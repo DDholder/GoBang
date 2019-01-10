@@ -6,7 +6,10 @@
 #include"chess.h"
 #include <ctime>
 #define OPOSITE(dir) dir==Chess::black?Chess::white:dir==Chess::white?Chess::black:dir==Chess::null?Chess::line:Chess::null
+template<typename T>
+constexpr auto OPOSITE_KIND(T kind) { return kind==Chess::black?Chess::white:Chess::black; }
 #define random(x) (rand()%(x+1))
+#define VIOLENCE
 class Computer
 {
 public:
@@ -27,6 +30,7 @@ public:
 		next,                      // 12
 		one_skip_two,			   // 13
 		oneside_two,
+		five
 
 	};
 	enum Dir

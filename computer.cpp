@@ -319,7 +319,84 @@ Chess Computer::findPos(QVector<Chess>& chesses, QVector<QVector<int>> index, QV
 }
 
 
+#ifdef VIOLENCE
+Chess Computer::getNextChess(Chess::color kind)
+{
+	int MeLength = kind == Chess::black ? board->BlackChesses.length() : board->WhiteChesses.length();
+	int YouLength = kind == Chess::black ? board->WhiteChesses.length() : board->BlackChesses.length();
+	//################空棋盘第一子处理###################//
+	if (MeLength == 0)
+	{
+		Chess value;
+		if (YouLength != 0)
+		{
+			int randx = random(2) - 1;
+			int randy = random(2) - 1;
+			while (randx == 0 && randy == 0)
+			{
+				randx = random(2) - 1;
+				randy = random(2) - 1;
+			}
+			value.x = kind == Chess::black ? board->WhiteChesses.at(YouLength - 1).x + randx : board->BlackChesses.at(YouLength - 1).x + randx;
+			value.y = kind == Chess::black ? board->WhiteChesses.at(YouLength - 1).y + randy : board->BlackChesses.at(YouLength - 1).y + randy;
 
+		}
+		else
+		{
+			value.x = 12;
+			value.y = 12;
+		}
+		value.kind = kind;
+		return value;
+	}
+	Chess value_Kind,value_OppKind;
+	Chess temp;
+	temp.kind = kind;
+	int max_Kind = 0;
+	int max_OffKind = 0;
+	for (int x = 0; x < 25; x++)
+	{
+		for (int y = 0; y < 25; y++)
+		{
+			if (board->map[x][y] != Chess::null)
+				continue;
+			temp.x = x; temp.y = y;
+			board->addChess(temp);
+			int score = getScore(kind);
+			if (score > max_Kind)
+			{
+				max_Kind = score;
+				value_Kind.x = temp.x;
+				value_Kind.y = temp.y;
+			}
+			board->removeLast(kind);
+		}
+	}
+	temp.kind = OPOSITE_KIND(kind);
+	for (int x = 0; x < 25; x++)
+	{
+		for (int y = 0; y < 25; y++)
+		{
+			if (board->map[x][y] != Chess::null)
+				continue;
+			temp.x = x; temp.y = y;
+			board->addChess(temp);
+			int score = getScore(OPOSITE_KIND(kind));
+			if (score > max_OffKind)
+			{
+				max_OffKind = score;
+				value_OppKind.x = temp.x;
+				value_OppKind.y = temp.y;
+			}
+			board->removeLast(OPOSITE_KIND(kind));
+		}
+	}
+	value_Kind.kind = kind; value_OppKind.kind = kind;
+	return max_Kind > max_OffKind ? value_Kind : value_OppKind;
+	//return value_Kind ;
+}
+ 
+#else
 Chess Computer::getNextChess(Chess::color kind)
 {
 	QVector<int*> scoresumList_White;//白子得分列表 L[n][8]:第n个子的全方向和,L[n][9]:第n个子的最佳方向分数
@@ -363,8 +440,8 @@ Chess Computer::getNextChess(Chess::color kind)
 		return value;
 	}
 
-	const int wMax = scoresumList_White.at(maxWhiteAt[0])[8];//白子最高得分
-	const int bMax = scoresumList_Black.at(maxBlackAt[0])[8];//黑子最高得分
+	//const int wMax = scoresumList_White.at(maxWhiteAt[0])[8];//白子最高得分
+	//const int bMax = scoresumList_Black.at(maxBlackAt[0])[8];//黑子最高得分
 	const int max_me = kind == Chess::black ? max_black : max_white;
 	const int max_you = kind == Chess::black ? max_white : max_black;
 	QVector<Chess> ChessMe = kind == Chess::black ? board->BlackChesses : board->WhiteChesses;
@@ -374,13 +451,13 @@ Chess Computer::getNextChess(Chess::color kind)
 	QVector<int> maxMeAt = kind == Chess::black ? maxBlackAt : maxWhiteAt;
 	QVector<int> maxYouAt = kind == Chess::black ? maxWhiteAt : maxBlackAt;
 	Chess value;
-	if (max_you >= max_me && max_me < 2000)
+	if (max_you > max_me && max_me < 2000)
 		value = findPos(ChessYou, index_you, maxYouAt, kind);
 	else
 		value = findPos(ChessMe, index_me, maxMeAt, kind);
 	return value;
 }
-
+#endif // VIOLENCE
 Chess Computer::getNextStep(int x, int y, Dir dir, Chess::color kind) const
 {
 	QVector<Chess> chesses = kind == Chess::white ? QVector<Chess>(board->WhiteChesses) : QVector<Chess>(board->BlackChesses);
@@ -516,25 +593,26 @@ void Computer::createTree() const
 	R->rchild->rchild->CreateBiTNode(C::next, RIGHT);
 	R->rchild->rchild->rchild->CreateBiTNode(C::four, LEFT);
 	R->rchild->rchild->rchild->CreateBiTNode(C::oneside_four, MID);
-	R->rchild->rchild->rchild->CreateBiTNode(C::four, RIGHT);
+	R->rchild->rchild->rchild->CreateBiTNode(C::five, RIGHT);
 }
 
 void Computer::setScore()
 {
 	score[one] = 1;
 	score[two] = 100;
-	score[double_two] = 1500;
+	score[double_two] = 1300;
 	score[two_skip_two] = 2000;
-	score[three] = 2000;
-	score[double_three] = 2000;
+	score[three] = 1400;
+	score[double_three] = 2100;
 	score[oneside_three] = 1000;
 	score[double_oneside_three] = 2;
-	score[three_skip_one] = 3000;
+	score[three_skip_one] = 2900;
 	score[four] = 3000;
 	score[oneside_four] = 3000;
 	score[double_oneside_four] = 2;
 	score[next] = 0;
-	score[one_skip_two] = 2000;
+	score[one_skip_two] = 1300;
 	score[oneside_two] = 10;
+	score[five] = 10000;
 }
 
