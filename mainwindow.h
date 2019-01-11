@@ -18,14 +18,14 @@ public:
 	~MainWindow();
 	ChessBoard *board=new ChessBoard;
 	Computer com_b;
-	Computer com_w;
+	//Computer com_w;
 	Rule rule;
 private slots:
 	 void on_pushButton_clicked();
 	void BoardBeChicked() ;
-    void on_pushButton_2_clicked();
+	void on_pushButton_2_clicked();
 
-    void on_pushButton_3_clicked();
+	void on_pushButton_3_clicked();
 
 private:
 	Ui::MainWindow *ui;

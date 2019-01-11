@@ -338,8 +338,7 @@ Chess Computer::get_Best_Poses(QVector<Chess>& chesses,Chess::color kind, int&ma
 			board->addChess({ x,y,local_kind });
 			for (int chessIndex = 0; chessIndex < chesses.length(); chessIndex++)
 			{
-				
-				int* scoresum = new int[10];
+				auto* scoresum = new int[10];
 				scoresum[8] = 0;
 				scoresum[9] = 0;
 				int maxLine = 0;
@@ -374,6 +373,7 @@ Chess Computer::get_Best_Poses(QVector<Chess>& chesses,Chess::color kind, int&ma
 						values.append(value);
 					}
 				}
+				delete[] scoresum;
 			}
 			board->removeLast(local_kind);
 		}
@@ -492,7 +492,8 @@ Chess Computer::getNextChess(Chess::color kind)
 	}*/
 	value_Kind.kind = kind; value_OppKind.kind = kind;
 	return ((max_Kind >= max_OffKind-500)|| max_Kind>=3000)&&max_OffKind<5000 ? value_Kind : value_OppKind;
-	//return value_Kind ;
+	//return { random(12),random(12),kind };
+	return value_Kind ;
 }
 
 #else

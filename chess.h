@@ -6,14 +6,14 @@ class Chess
 {
 
 public:
-    enum color
-    {
-        black = 2,
-        white = 1,
-        null=0,
+	enum color
+	{
+		black = 2,
+		white = 1,
+		null=0,
 		line=4
-    };
-    Chess();
+	};
+	Chess();
 	int x,y;
 	color kind;
 	Chess(int posx, int posy, color thiskind = black);

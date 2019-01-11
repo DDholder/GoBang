@@ -81,7 +81,6 @@ private:
 
 	bool findTwo(int x, int y, Dir dir, Chess::color kind);
 
-	void get_max_line(QVector<Chess>& max_chesses,Chess::color kind);
 };
 
 #endif // COMPUTER_H

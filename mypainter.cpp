@@ -57,3 +57,8 @@ void myPainter::setChessBorad(ChessBoard *chessboard)
 {
 	board = chessboard;
 }
+
+void myPainter::setChessBorad(ChessBoard chessboard)
+{
+	board = &chessboard;
+}

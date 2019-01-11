@@ -14,6 +14,7 @@ public:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void setChessBorad(ChessBoard *chessboard=new ChessBoard);
+	void setChessBorad(ChessBoard chessboard);
 	Rule::CheckResult winner = Rule::CheckResult::no_win;
 signals:
 	void clicked();
