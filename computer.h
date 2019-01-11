@@ -80,7 +80,7 @@ private:
 	Chess findPos(QVector<Chess>& chesses, QVector<QVector<int>> index, QVector<int> maxAt, Chess::color kind) ;
 
 	bool findTwo(int x, int y, Dir dir, Chess::color kind);
-
+	int* get_Area();
 };
 
 #endif // COMPUTER_H

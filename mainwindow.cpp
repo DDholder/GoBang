@@ -48,7 +48,7 @@ void MainWindow::on_pushButton_clicked()
 		board->addChess(com_b.getNextChess(Chess::white));
 		ui->widget->winner = rule.judge();
 		ui->widget->update();
-		Sleep(50);
+		//Sleep(50);
 	}
 }
 

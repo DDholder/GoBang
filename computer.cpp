@@ -46,6 +46,8 @@ bool Computer::findTwo(int x, int y, Dir dir, Chess::color kind)
 
 
 
+
+
 Computer::ChessAlignment Computer::checkChessAlignment(int x, int y, Dir dir, Chess::color kind)
 {
 	QVector<Chess> chesses = kind == Chess::white ? QVector<Chess>(board->WhiteChesses) : QVector<Chess>(board->BlackChesses);
@@ -322,6 +324,27 @@ Chess Computer::findPos(QVector<Chess>& chesses, QVector<QVector<int>> index, QV
 	return value;
 }
 
+int * Computer::get_Area()
+{
+	int* area=new int[4];
+	int maxx = 0, maxy = 0, minx = 24, miny = 24;
+	for (auto& BlackChesse : board->BlackChesses)
+	{
+		if (BlackChesse.x > maxx)maxx = BlackChesse.x;
+		if (BlackChesse.x < minx)minx = BlackChesse.x;
+		if (BlackChesse.y > maxy)maxy = BlackChesse.y;
+		if (BlackChesse.y < miny)miny = BlackChesse.y;
+	}
+	for(auto& WhiteChesses:board->WhiteChesses)
+	{
+		if (WhiteChesses.x > maxx)maxx = WhiteChesses.x;
+		if (WhiteChesses.x < minx)minx = WhiteChesses.x;
+		if (WhiteChesses.y > maxy)maxy = WhiteChesses.y;
+		if (WhiteChesses.y < miny)miny = WhiteChesses.y;
+	}
+	area[0] = minx-2; area[1] = miny-2; area[2] = maxx+2; area[3] = maxy+2;
+	return area;
+}
 Chess Computer::get_Best_Poses(QVector<Chess>& chesses,Chess::color kind, int&max)
 {
 	Chess value;
@@ -329,10 +352,13 @@ Chess Computer::get_Best_Poses(QVector<Chess>& chesses,Chess::color kind, int&ma
 	const Chess::color local_kind = chesses[0].kind;
 	value.kind = local_kind;
 	int maxSingleLine = 0;
+	int* area = get_Area();
 	for (int x = 0; x < 25; x++)
 	{
 		for (int y = 0; y < 25; y++)
 		{
+			if (x<area[0] || y<area[1] || x>area[2] || y>area[3])
+				continue;
 			if (board->map[x][y] != Chess::null)
 				continue;
 			board->addChess({ x,y,local_kind });
@@ -378,6 +404,7 @@ Chess Computer::get_Best_Poses(QVector<Chess>& chesses,Chess::color kind, int&ma
 			board->removeLast(local_kind);
 		}
 	}
+	delete area;
 	return get_Final_Pos(values,kind);
 }
 Chess Computer::get_Final_Pos(QVector<Chess>& values, Chess::color kind)
