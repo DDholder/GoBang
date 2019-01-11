@@ -73,10 +73,15 @@ private:
 	//获取得分列表、最佳棋子位置、最佳分数
 	void getList(QVector<Chess> &chesses, QVector<int*> &scoresumList, QVector<int> &maxWhiteAt, int &max);
 
+	Chess get_Best_Poses(QVector<Chess>& chesses, Chess::color kind, int&max);
+
+	Chess get_Final_Pos(QVector<Chess>&values, Chess::color kind);
 	//寻找最佳落子位置
 	Chess findPos(QVector<Chess>& chesses, QVector<QVector<int>> index, QVector<int> maxAt, Chess::color kind) ;
 
 	bool findTwo(int x, int y, Dir dir, Chess::color kind);
+
+	void get_max_line(QVector<Chess>& max_chesses,Chess::color kind);
 };
 
 #endif // COMPUTER_H

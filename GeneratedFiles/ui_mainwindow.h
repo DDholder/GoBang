@@ -31,6 +31,8 @@ public:
     QPushButton *pushButton;
     QLabel *label;
     QCheckBox *checkBox;
+    QPushButton *pushButton_2;
+    QPushButton *pushButton_3;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -54,10 +56,16 @@ public:
         checkBox = new QCheckBox(centralWidget);
         checkBox->setObjectName(QStringLiteral("checkBox"));
         checkBox->setGeometry(QRect(650, 440, 88, 19));
+        pushButton_2 = new QPushButton(centralWidget);
+        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        pushButton_2->setGeometry(QRect(650, 480, 75, 23));
+        pushButton_3 = new QPushButton(centralWidget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(650, 550, 75, 23));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 760, 26));
+        menuBar->setGeometry(QRect(0, 0, 760, 23));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -77,6 +85,8 @@ public:
         pushButton->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
         label->setText(QApplication::translate("MainWindow", "TextLabel", nullptr));
         checkBox->setText(QApplication::translate("MainWindow", "CheckBox", nullptr));
+        pushButton_2->setText(QApplication::translate("MainWindow", "back", nullptr));
+        pushButton_3->setText(QApplication::translate("MainWindow", "clear", nullptr));
     } // retranslateUi
 
 };

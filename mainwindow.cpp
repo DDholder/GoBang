@@ -42,3 +42,16 @@ void MainWindow::on_pushButton_clicked()
 	ui->widget->winner = rule.judge();
 	ui->widget->update();
 }
+
+void MainWindow::on_pushButton_2_clicked()
+{
+	board->removeLast(Chess::black);
+	board->removeLast(Chess::white);
+	ui->widget->update();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+	board->reset();
+	ui->widget->update();
+}

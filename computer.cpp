@@ -21,21 +21,21 @@ bool Computer::findTwo(int x, int y, Dir dir, Chess::color kind)
 	{
 		switch (Dir(i))
 		{
-		case Computer::up:if (dir != down && board->map[x][y - 1] == kind && board->map[x][y - 2] == kind && board->map[x][y - 3] == Chess::null)return true;
+		case Computer::up:if (dir != down && dir != up && board->map[x][y - 1] == kind && board->map[x][y - 2] == kind && board->map[x][y - 3] == Chess::null)return true;
 			break;
-		case Computer::down:if (dir != up && board->map[x][y + 1] == kind && board->map[x][y + 2] == kind && board->map[x][y + 3] == Chess::null)return true;
+		case Computer::down:if (dir != up && dir != down && board->map[x][y + 1] == kind && board->map[x][y + 2] == kind && board->map[x][y + 3] == Chess::null)return true;
 			break;
-		case Computer::left:if (dir != right && board->map[x - 1][y] == kind && board->map[x - 2][y] == kind && board->map[x - 3][y] == Chess::null)return true;
+		case Computer::left:if (dir != left && dir != right && board->map[x - 1][y] == kind && board->map[x - 2][y] == kind && board->map[x - 3][y] == Chess::null)return true;
 			break;
-		case Computer::right:if (dir != left && board->map[x + 1][y] == kind && board->map[x + 2][y] == kind && board->map[x + 3][y] == Chess::null)return true;
+		case Computer::right:if (dir != right && dir != left && board->map[x + 1][y] == kind && board->map[x + 2][y] == kind && board->map[x + 3][y] == Chess::null)return true;
 			break;
-		case Computer::up_left:if (dir != down_right && board->map[x - 1][y - 1] == kind && board->map[x - 2][y - 2] == kind && board->map[x - 3][y - 3] == Chess::null)return true;
+		case Computer::up_left:if (dir != up_left && dir != down_right && board->map[x - 1][y - 1] == kind && board->map[x - 2][y - 2] == kind && board->map[x - 3][y - 3] == Chess::null)return true;
 			break;
-		case Computer::up_right:if (dir != down_left && board->map[x + 1][y - 1] == kind && board->map[x + 2][y - 2] == kind && board->map[x + 3][y - 3] == Chess::null)return true;
+		case Computer::up_right:if (dir != up_right && dir != down_left && board->map[x + 1][y - 1] == kind && board->map[x + 2][y - 2] == kind && board->map[x + 3][y - 3] == Chess::null)return true;
 			break;
-		case Computer::down_left:if (dir != up_right && board->map[x - 1][y + 1] == kind && board->map[x - 2][y + 2] == kind && board->map[x - 3][y + 3] == Chess::null)return true;
+		case Computer::down_left:if (dir != down_left && dir != up_right && board->map[x - 1][y + 1] == kind && board->map[x - 2][y + 2] == kind && board->map[x - 3][y + 3] == Chess::null)return true;
 			break;
-		case Computer::down_right:if (dir != up_left && board->map[x + 1][y + 1] == kind && board->map[x + 2][y + 2] == kind && board->map[x + 3][y + 3] == Chess::null)return true;
+		case Computer::down_right:if (dir != down_right && dir != up_left && board->map[x + 1][y + 1] == kind && board->map[x + 2][y + 2] == kind && board->map[x + 3][y + 3] == Chess::null)return true;
 			break;
 		default:
 			break;
@@ -43,6 +43,8 @@ bool Computer::findTwo(int x, int y, Dir dir, Chess::color kind)
 	}
 	return false;
 }
+
+
 
 Computer::ChessAlignment Computer::checkChessAlignment(int x, int y, Dir dir, Chess::color kind)
 {
@@ -259,6 +261,8 @@ void Computer::getList(QVector<Chess>& chesses, QVector<int*>& scoresumList, QVe
 	}
 }
 
+
+
 Chess Computer::findPos(QVector<Chess>& chesses, QVector<QVector<int>> index, QVector<int> maxAt, Chess::color kind)
 {
 	Chess value;
@@ -318,12 +322,103 @@ Chess Computer::findPos(QVector<Chess>& chesses, QVector<QVector<int>> index, QV
 	return value;
 }
 
-
+Chess Computer::get_Best_Poses(QVector<Chess>& chesses,Chess::color kind, int&max)
+{
+	Chess value;
+	QVector<Chess> values;
+	const Chess::color local_kind = chesses[0].kind;
+	value.kind = local_kind;
+	int maxSingleLine = 0;
+	for (int x = 0; x < 25; x++)
+	{
+		for (int y = 0; y < 25; y++)
+		{
+			if (board->map[x][y] != Chess::null)
+				continue;
+			board->addChess({ x,y,local_kind });
+			for (int chessIndex = 0; chessIndex < chesses.length(); chessIndex++)
+			{
+				
+				int* scoresum = new int[10];
+				scoresum[8] = 0;
+				scoresum[9] = 0;
+				int maxLine = 0;
+				for (auto lineIndex = 0; lineIndex < 8; lineIndex++)
+				{
+					const int tx = chesses.at(chessIndex).x;
+					const int ty = chesses.at(chessIndex).y;
+					scoresum[lineIndex] = score[checkChessAlignment(tx, ty, Dir(lineIndex), local_kind)];
+					if (scoresum[lineIndex] > maxLine)
+					{
+						maxLine = scoresum[lineIndex];
+						scoresum[9] = lineIndex;
+					}
+					scoresum[8] += scoresum[lineIndex];
+				}
+				if (scoresum[scoresum[9]] > maxSingleLine)
+				{
+					maxSingleLine = scoresum[scoresum[9]];
+					values.clear();
+					max = 0;
+				}
+				if (scoresum[scoresum[9]] == maxSingleLine)
+				{
+					if (scoresum[8] > max)
+					{
+						max = scoresum[8];
+						values.clear();
+					}
+					if (scoresum[8] == max)
+					{
+						value.x = x; value.y = y;
+						values.append(value);
+					}
+				}
+			}
+			board->removeLast(local_kind);
+		}
+	}
+	return get_Final_Pos(values,kind);
+}
+Chess Computer::get_Final_Pos(QVector<Chess>& values, Chess::color kind)
+{
+	int compare_num = values[0].kind == kind?10000:0;
+	Chess value;
+	for (int i = 0; i < values.length(); i++)
+	{
+		
+		if(values[i].kind==kind)
+		{
+			board->addChess(values[i]);
+			int score = getScore(OPOSITE_KIND(kind));
+			if(score < compare_num)
+			{
+				compare_num = score;
+				value = values[i];
+			}
+			board->removeLast(values[i].kind);
+		}
+		else
+		{
+			values[i].kind = kind;
+			board->addChess(values[i]);
+			int score = getScore(kind);
+			if (score > compare_num)
+			{
+				compare_num = score;
+				value = values[i];
+			}
+			board->removeLast(values[i].kind);
+		}
+		
+	}
+	return value;
+}
 #ifdef VIOLENCE
 Chess Computer::getNextChess(Chess::color kind)
 {
-	int MeLength = kind == Chess::black ? board->BlackChesses.length() : board->WhiteChesses.length();
-	int YouLength = kind == Chess::black ? board->WhiteChesses.length() : board->BlackChesses.length();
+	const int MeLength = kind == Chess::black ? board->BlackChesses.length() : board->WhiteChesses.length();
+	const int YouLength = kind == Chess::black ? board->WhiteChesses.length() : board->BlackChesses.length();
 	//################空棋盘第一子处理###################//
 	if (MeLength == 0)
 	{
@@ -349,12 +444,16 @@ Chess Computer::getNextChess(Chess::color kind)
 		value.kind = kind;
 		return value;
 	}
-	Chess value_Kind,value_OppKind;
 	Chess temp;
+
 	temp.kind = kind;
 	int max_Kind = 0;
 	int max_OffKind = 0;
-	for (int x = 0; x < 25; x++)
+	QVector<Chess> ChessMe = kind == Chess::black ? board->BlackChesses : board->WhiteChesses;
+	QVector<Chess> ChessYou = kind == Chess::black ? board->WhiteChesses : board->BlackChesses;
+	Chess value_Kind = get_Best_Poses(ChessMe,kind, max_Kind);
+	Chess value_OppKind = get_Best_Poses(ChessYou,kind, max_OffKind);
+	/*for (int x = 0; x < 25; x++)
 	{
 		for (int y = 0; y < 25; y++)
 		{
@@ -390,12 +489,12 @@ Chess Computer::getNextChess(Chess::color kind)
 			}
 			board->removeLast(OPOSITE_KIND(kind));
 		}
-	}
+	}*/
 	value_Kind.kind = kind; value_OppKind.kind = kind;
-	return max_Kind > max_OffKind ? value_Kind : value_OppKind;
+	return ((max_Kind >= max_OffKind-500)|| max_Kind>=3000)&&max_OffKind<5000 ? value_Kind : value_OppKind;
 	//return value_Kind ;
 }
- 
+
 #else
 Chess Computer::getNextChess(Chess::color kind)
 {
@@ -422,14 +521,14 @@ Chess Computer::getNextChess(Chess::color kind)
 		{
 			int randx = random(2) - 1;
 			int randy = random(2) - 1;
-			while (randx==0&&randy==0)
+			while (randx == 0 && randy == 0)
 			{
 				randx = random(2) - 1;
 				randy = random(2) - 1;
 			}
 			value.x = kind == Chess::black ? board->WhiteChesses.at(YouLength - 1).x + randx : board->BlackChesses.at(YouLength - 1).x + randx;
 			value.y = kind == Chess::black ? board->WhiteChesses.at(YouLength - 1).y + randy : board->BlackChesses.at(YouLength - 1).y + randy;
-			
+
 		}
 		else
 		{
@@ -600,18 +699,18 @@ void Computer::setScore()
 {
 	score[one] = 1;
 	score[two] = 100;
-	score[double_two] = 1300;
+	score[double_two] = 500;
 	score[two_skip_two] = 2000;
-	score[three] = 1400;
-	score[double_three] = 2100;
+	score[three] = 1700;
+	score[double_three] = 3500;
 	score[oneside_three] = 1000;
 	score[double_oneside_three] = 2;
-	score[three_skip_one] = 2900;
-	score[four] = 3000;
+	score[three_skip_one] = 2500;
+	score[four] = 3500;
 	score[oneside_four] = 3000;
 	score[double_oneside_four] = 2;
 	score[next] = 0;
-	score[one_skip_two] = 1300;
+	score[one_skip_two] = 1100;
 	score[oneside_two] = 10;
 	score[five] = 10000;
 }
