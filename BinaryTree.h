@@ -2,12 +2,12 @@
 #include"mystack.h"
 #include"stack"
 
-template<typename T> class BiTNode
+template<typename T> class BiTNode final
 {
 public:   
 	enum operate
 	{
-		delect,
+		clear,
 		visit_forward,
 		visit_mid,
 		visit_back
@@ -45,7 +45,7 @@ public:
 		if (child == mid)
 			this->mchild = new BiTNode(value);
 	}
-	virtual~BiTNode() { visit(delect); }
+	virtual~BiTNode() { visit(clear); }
 	static bool  CreateBiTree(BiTNode * &t, T data)
 	{
 		if (t == nullptr)
@@ -74,7 +74,7 @@ private:
 		{
 			if (s.empty())
 			{
-				if (op == delect)
+				if (op == clear)
 				{
 					delete pos;
 					pos = nullptr;
@@ -83,7 +83,7 @@ private:
 			}
 			visit(s.mypop()->rchild, op);
 		}
-		if (op == delect)
+		if (op == clear)
 		{
 			delete pos;
 			pos = nullptr;

@@ -417,7 +417,7 @@ Chess Computer::get_Final_Pos(QVector<Chess>& values, Chess::color kind)
 		if(values[i].kind==kind)
 		{
 			board->addChess(values[i]);
-			int score = getScore(OPOSITE_KIND(kind));
+			int score = getScore(oposite_kind(kind));
 			if(score < compare_num)
 			{
 				compare_num = score;
@@ -452,12 +452,12 @@ Chess Computer::getNextChess(Chess::color kind)
 		Chess value;
 		if (YouLength != 0)
 		{
-			int randx = random(2) - 1;
-			int randy = random(2) - 1;
+			int randx = RANDOM(2) - 1;
+			int randy = RANDOM(2) - 1;
 			while (randx == 0 && randy == 0)
 			{
-				randx = random(2) - 1;
-				randy = random(2) - 1;
+				randx = RANDOM(2) - 1;
+				randy = RANDOM(2) - 1;
 			}
 			value.x = kind == Chess::black ? board->WhiteChesses.at(YouLength - 1).x + randx : board->BlackChesses.at(YouLength - 1).x + randx;
 			value.y = kind == Chess::black ? board->WhiteChesses.at(YouLength - 1).y + randy : board->BlackChesses.at(YouLength - 1).y + randy;

@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	//com_w.setBoard(board);
 	MainWindow::connect(ui->widget, &myPainter::clicked, this, &MainWindow::BoardBeChicked);
 
-	ui->label->setText(QString::number(OPOSITE(Chess::line)));
+	ui->label->setText(QString::number(OPPOSITE(Chess::line)));
 	rule.set_board(board);
 }
 

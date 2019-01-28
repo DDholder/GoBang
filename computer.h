@@ -5,10 +5,10 @@
 #include"BinaryTree.h"
 #include"chess.h"
 #include <ctime>
-#define OPOSITE(dir) dir==Chess::black?Chess::white:dir==Chess::white?Chess::black:dir==Chess::null?Chess::line:Chess::null
+#define OPPOSITE(dir) dir==Chess::black?Chess::white:dir==Chess::white?Chess::black:dir==Chess::null?Chess::line:Chess::null
 template<typename T>
-constexpr auto OPOSITE_KIND(T kind) { return kind==Chess::black?Chess::white:Chess::black; }
-#define random(x) (rand()%(x+1))
+constexpr auto oposite_kind(T kind) { return kind==Chess::black?Chess::white:Chess::black; }
+#define RANDOM(x) (rand()%(x+1))
 #define VIOLENCE
 class Computer
 {
